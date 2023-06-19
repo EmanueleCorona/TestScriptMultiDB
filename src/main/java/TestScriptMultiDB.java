@@ -1,10 +1,8 @@
-import constants.TestScriptConst;
-import constants.TestScriptConst.FieldType;
+import utils.TestScriptConst;
+import utils.TestScriptConst.FieldType;
+import utils.TestScriptUtils;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 
 // Jira per testare: HWFHERAWFM-4868
@@ -15,7 +13,8 @@ public class TestScriptMultiDB {
     private static final int EXIT = 0;
     private static final int TABLE_CREATION = 1;
     private static final int ADD_COLUMN = 2;
-    private static final String FILE_PATH = "src/main/files/Script.txt";
+    private static final String READ_FILE_PATH = "src/main/files/fields.txt";
+    private static final String WRITE_FILE_PATH = "src/main/files/script.sql";
 
 
     public static void main(String[] args) {
@@ -42,7 +41,6 @@ public class TestScriptMultiDB {
         }
     }
 
-
     private static void showMenu() {
         System.out.println("\n========== Test Script MultiDb ==========");
         System.out.println("0 ESCI");
@@ -52,8 +50,14 @@ public class TestScriptMultiDB {
     }
 
     private static void addColumns() {
+        BufferedWriter writer = null;
+        BufferedReader reader = null;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
+            reader = new BufferedReader(new FileReader(READ_FILE_PATH));
+            writer = new BufferedWriter(new FileWriter(WRITE_FILE_PATH));
+
+            writer.append(TestScriptConst.GEOCALL_HEADER).append("\n");
+
             String sql = TestScriptConst.ADD_COLUMN;
 
             System.out.println("========== Aggiunta Colonne ==========");
@@ -78,7 +82,7 @@ public class TestScriptMultiDB {
                         readyToWrite = false;
                         isFieldName = false;
                     } else {
-                        // Impostazione tipo tabella
+                        // Fase impostazione tipo capo
                         sql = sql.replace(fieldType, getFormattedFieldType(row));
                         fieldType = getFormattedFieldType(row);
                         readyToWrite = true;
@@ -87,19 +91,20 @@ public class TestScriptMultiDB {
 
                     // Stampa lo script dopo che sono stati impostati sia il nome che il tipo del campo
                     if (readyToWrite) {
-                        System.out.println(sql);
+                        writer.append(sql).append("\n");
                     }
                 }
             }
-
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException("File non trovato");
         } catch (IOException e) {
             throw new RuntimeException("Errore durante il tentativo di aggiunta delle colonne");
+        } finally {
+            TestScriptUtils.closeBufferedWriter(writer);
+            TestScriptUtils.closeBufferedReader(reader);
         }
     }
-
 
     private static String getFormattedFieldType(String fieldType) {
         if (fieldType.contains(FieldType.NUMBER)) {
@@ -126,25 +131,3 @@ public class TestScriptMultiDB {
         return fieldType;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

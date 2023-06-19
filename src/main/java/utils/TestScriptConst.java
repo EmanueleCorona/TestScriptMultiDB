@@ -1,7 +1,8 @@
-package constants;
+package utils;
 
 public class TestScriptConst {
 
+    public static final String GEOCALL_HEADER = "#!inc geocall/base.properties";
     public static final String CREATE_TABLE = "";
     public static final String ADD_COLUMN = "{ALTER_ADD_COLUMN nome_tabella nome_campo {tipo_dato}}\n/";
 
