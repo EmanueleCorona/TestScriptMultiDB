@@ -1,15 +1,18 @@
 package testscript.utils;
 
 public class TestScriptConst {
-
-    public static final String GEOCALL_HEADER = "#!inc geocall/base.properties";
-    public static final String SCRIPT_SEPARETOR = "\n/";
-    public static final String CREATE_TABLE = "";
-    public static final String TABLE_NAME = "nome_tabella";
-    public static final String FIELD_NAME = "nome_campo";
-    public static final String FIELD_TYPE = "tipo_dato";
-    public static final String READER_PATH = "src/main/files/fields.txt";
-    public static final String WRITER_PATH = "src/main/files/script.sql";
+    public static final String NEW_LINE = "\n";
+    public static final String TABULATION = "\t";
+    public static final String GEOCALL_HEADER = "#!inc geocall/base.properties" + NEW_LINE;
+    public static final String SCRIPT_SEPARETOR = NEW_LINE + "/" + NEW_LINE;
+    public static final String TABLE_NAME = "TABLE_NAME";
+    public static final String FIELD_NAME = "FIELD_NAME";
+    public static final String FIELD_TYPE = "FIELD_TYPE";
+    public static final String ID = "ID";
+    public static final char LOGIC_STATE_TABLE = 'L';
+    public static final String DATASTAMP = "DATASTAMP";
+    public static final String LOGIN = "LOGIN";
+    public static final String ACTION = "ACTION";
 
 
     public static class FieldType {

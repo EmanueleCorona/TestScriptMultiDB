@@ -1,54 +1,47 @@
 package testscript.script;
 
-import testscript.utils.TestScriptConst;
-import testscript.utils.TestScriptUtils;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import java.io.*;
-import java.util.Scanner;
+import static testscript.utils.TestScriptConst.*;
+import static testscript.utils.TestScriptConst.FieldType.*;
 
-import static testscript.utils.TestScriptConst.SCRIPT_SEPARETOR;
+// HWFHERAWFM-4865
+public class AddColumnScript extends ScriptGenerator {
+    private static final String ADD_COLUMN = "{ALTER_ADD_COLUMN " + TABLE_NAME + " " + FIELD_NAME + " {" + FIELD_TYPE + "}}" + SCRIPT_SEPARETOR;
 
-public class AddColumnScript {
-    private boolean isFieldName = true;
-    private String fieldName = TestScriptConst.FIELD_NAME;
-    private String fieldType = TestScriptConst.FIELD_TYPE;
-    private BufferedWriter writer;
-    private BufferedReader reader;
-    private final Scanner scanner = new Scanner(System.in);
-    private static final String ADD_COLUMN = "{ALTER_ADD_COLUMN nome_tabella nome_campo {tipo_dato}}" + SCRIPT_SEPARETOR;
-
-
-    public void addColumns() {
+    @Override
+    public void generateStatement() {
         try {
             initResources();
 
-            System.out.println("========== Aggiunta Colonne ==========");
-            System.out.print("Inserisci il nome della tabella: ");
+            String sql = ADD_COLUMN.replace(TABLE_NAME, tableName);
 
-            String sql = ADD_COLUMN.replace(TestScriptConst.TABLE_NAME, scanner.next());
+            String fieldName = FIELD_NAME;
+            String fieldType = FIELD_TYPE;
+
             String row;
+            boolean readyToWrite;
 
             while ((row = reader.readLine()) != null) {
                 if (!row.isEmpty()) {
-                    boolean readyToWrite;
 
                     if (isFieldName) {
-                        // Fase impostazione nome campo
+                        row = getFormattedNameType(row);
                         sql = sql.replace(fieldName, row);
                         fieldName = row;
                         readyToWrite = false;
                         isFieldName = false;
                     } else {
-                        // Fase impostazione tipo capo
-                        sql = sql.replace(fieldType, TestScriptUtils.getFormattedFieldType(row));
-                        fieldType = TestScriptUtils.getFormattedFieldType(row);
+                        row = getFormattedFieldType(row);
+                        sql = sql.replace(fieldType, row);
+                        fieldType = row;
                         readyToWrite = true;
                         isFieldName = true;
                     }
 
-                    // Stampa lo script dopo che sono stati impostati sia il nome che il tipo del campo
                     if (readyToWrite) {
-                        writer.append(sql).append("\n");
+                        writer.append(sql);
                     }
                 }
             }
@@ -58,15 +51,27 @@ public class AddColumnScript {
         } catch (IOException e) {
             throw new RuntimeException("Errore durante il tentativo di aggiunta delle colonne");
         } finally {
-            TestScriptUtils.closeBufferedReader(reader);
-            TestScriptUtils.closeBufferedWriter(writer);
+            closeResources();
         }
     }
 
-    public void initResources() throws IOException {
-        reader = new BufferedReader(new FileReader(TestScriptConst.READER_PATH));
-        writer = new BufferedWriter(new FileWriter(TestScriptConst.WRITER_PATH));
+    @Override
+    protected String getFormattedFieldType(String fieldType) {
+        if (fieldType.contains(NUMBER)) {
+            if (fieldType.contains(",")) {
+                return NUMBER + " " + fieldType.replaceAll("[^0-9,]", "").replace(",", " ");
+            } else {
+                return NUMBER + " " + fieldType.replaceAll("[^0-9]", "") + " 0";
+            }
+        } else if (fieldType.contains(VARCHAR)) {
+            fieldType = fieldType.replaceFirst("VARCHAR2", "");
+            return VARCHAR + " " + fieldType.replaceAll("[^0-9]", "");
 
-        writer.append(TestScriptConst.GEOCALL_HEADER).append("\n");
+        } else if (fieldType.contains(CHAR)) {
+            return CHAR + " 1";
+
+        } else {
+            return TIMESTAMP;
+        }
     }
 }
