@@ -1,10 +1,12 @@
 package testscript.script;
 
 import testscript.utils.TestScriptConst;
-import testscript.utils.TestScriptConst.FieldType;
+import testscript.utils.TestScriptConst.Error;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static testscript.utils.TestScriptConst.FieldType.*;
 import static testscript.utils.TestScriptConst.*;
 
 public class CreateTableScript extends ScriptGenerator {
@@ -20,17 +22,16 @@ public class CreateTableScript extends ScriptGenerator {
     @Override
     public void generateStatement() {
         try {
-            initResources();
-
-            String row;
+            writeHeader();
 
             while ((row = reader.readLine()) != null) {
                 if (!row.isEmpty()) {
                     if (isFieldName) {
-                        String fieldName = getFormattedNameType(row);
-                        if (checkFieldName(fieldName)) break;
-                        writeFieldName(fieldName);
+                        // Fase impostazione nome campo
+                        String fieldName = getFormattedFieldName(row);
+                        if (isFieldNameValid(fieldName)) writeFieldName(fieldName);
                     } else {
+                        // Fase impostazione tipo campo
                         String fieldType = getFormattedFieldType(row);
                         writeFieldType(fieldType);
                     }
@@ -39,52 +40,59 @@ public class CreateTableScript extends ScriptGenerator {
 
             writeFooter();
 
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(Error.ERR_FILE_NOT_FOUND);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(Error.ERR_FILE_WRITING);
         } finally {
             closeResources();
         }
     }
 
     @Override
-    protected void initResources() throws IOException {
-        super.initResources();
+    protected void writeHeader() throws IOException {
+        super.writeHeader();
         writer.append(CREATE_TABLE_HEADER.replace(TABLE_NAME, tableName));
     }
 
     @Override
     protected String getFormattedFieldType(String fieldType) {
-        if (fieldType.contains(FieldType.NUMBER)) {
-            if (fieldType.contains(",")) {
-                fieldType = "{NUMBER " + fieldType.replaceAll("[^0-9,]", "").replace(",", " ").concat("}");
+        if (fieldType.contains(NUMBER)) {
+            if (fieldType.contains(COMMA)) {
+                fieldType = "{" + NUMBER + SPACE + fieldType.replaceAll("[^0-9,]", "").replace(COMMA, SPACE).concat("}");
             } else {
-                fieldType = "{NUMBER " + fieldType.replaceAll("[^0-9]", "") + " 0}";
+                fieldType = "{" + NUMBER + SPACE + fieldType.replaceAll("[^0-9]", "") + " 0}";
             }
-        }
-
-        if (fieldType.contains(FieldType.VARCHAR)) {
+        } else if (fieldType.contains(VARCHAR)) {
             fieldType = fieldType.replaceFirst("VARCHAR2", "");
-            return "{" + FieldType.VARCHAR + " " + fieldType.replaceAll("[^0-9]", "") + "}";
-        }
+            return "{" + VARCHAR + SPACE + fieldType.replaceAll("[^0-9]", "") + "}";
 
-        if (fieldType.contains(FieldType.CHAR)) {
-            return "{" + FieldType.CHAR + " 1" + "}";
-        }
+        } else if (fieldType.contains(CHAR)) {
+            return "{" + CHAR + " 1" + "}";
 
-        if (fieldType.contains(FieldType.TIMESTAMP)) {
-            return "{" + FieldType.TIMESTAMP + "}";
+        } else {
+            return "{" + TIMESTAMP + "}";
         }
 
         return fieldType;
     }
 
-    protected boolean checkFieldName(String row) {
-        return row.equals(TestScriptConst.DATASTAMP) || row.equals(TestScriptConst.LOGIN) || row.equals(TestScriptConst.ACTION);
+    protected boolean isFieldNameValid(String fieldName) throws IOException {
+        boolean isFieldNameValid = true;
+
+        // Controllo per skippare DATASTAMP, LOGIN e ACTION e inserirli alla fine dello script
+        if (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) || fieldName.equals(TestScriptConst.ACTION)) {
+            while (reader.readLine().isEmpty()) ;
+            isFieldNameValid = false;
+        }
+
+        return isFieldNameValid;
     }
 
     protected void writeFieldName(String fieldName) throws IOException {
-        if (!fieldName.endsWith(TestScriptConst.ID)) isPrimaryKey = false;
-        writer.append(TABULATION).append(fieldName).append(" ");
+        // Se il primo campo non contiene "ID" si presume che non ci sia una Primary Key
+        if (!fieldName.endsWith(ID)) isPrimaryKey = false;
+        writer.append(TABULATION).append(fieldName).append(SPACE);
         isFieldName = false;
     }
 
@@ -97,11 +105,29 @@ public class CreateTableScript extends ScriptGenerator {
             return;
         }
 
-        if (reader.ready()) {
-            writer.append(fieldType).append(",").append(NEW_LINE);
+        if (isThereAnotherRow()) {
+            writer.append(fieldType).append(COMMA).append(NEW_LINE);
         } else {
-            writer.append(fieldType).append(NEW_LINE);
+            if (isLogicStateTable()) {
+                writer.append(fieldType).append(NEW_LINE);
+            } else {
+                // DATASTAMP, LOGIN e ACTION vengono automaticamente messi come ultimi campi
+                writer.append(fieldType).append(COMMA).append(NEW_LINE);
+            }
         }
+    }
+
+    protected boolean isLogicStateTable() {
+        boolean isLogicStateTable;
+
+        // Controllo messo per evitare errori in caso di test del programma
+        if (tableName.length() > 4) {
+            isLogicStateTable = tableName.charAt(1) == LOGIC_STATE_TABLE || tableName.charAt(4) == LOGIC_STATE_TABLE;
+        } else {
+            isLogicStateTable = tableName.charAt(1) == LOGIC_STATE_TABLE;
+        }
+
+        return isLogicStateTable;
     }
 
     protected void writeFooter() throws IOException {
@@ -114,9 +140,5 @@ public class CreateTableScript extends ScriptGenerator {
         } else {
             writer.append(CREATE_TABLE_FOOTER);
         }
-    }
-
-    protected boolean isLogicStateTable() {
-        return (tableName.charAt(1) == TestScriptConst.LOGIC_STATE_TABLE || tableName.charAt(4) == TestScriptConst.LOGIC_STATE_TABLE);
     }
 }

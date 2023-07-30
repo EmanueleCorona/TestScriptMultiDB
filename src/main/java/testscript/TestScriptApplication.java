@@ -2,20 +2,14 @@ package testscript;
 
 import testscript.script.AddColumnScript;
 import testscript.script.CreateTableScript;
-import testscript.script.InsertIntoScript;
 
 import java.util.Scanner;
 
 public class TestScriptApplication {
-
     private static final int EXIT = 0;
     private static final int TABLE_CREATION = 1;
     private static final int ADD_COLUMN = 2;
-    private static final int INSERT = 3;
     private static final Scanner scanner = new Scanner(System.in);
-    private static final AddColumnScript addColumnScript = new AddColumnScript();
-    private static final InsertIntoScript insertIntoScript = new InsertIntoScript();
-    private static final CreateTableScript createTableScript = new CreateTableScript();
 
 
     public static void main(String[] args) {
@@ -37,10 +31,6 @@ public class TestScriptApplication {
                     addColumns();
                     break;
                 }
-                case INSERT: {
-                    insertValues();
-                    break;
-                }
             }
         }
     }
@@ -50,35 +40,52 @@ public class TestScriptApplication {
         System.out.println("0 ESCI");
         System.out.println("1 CREAZIONE TABELLA");
         System.out.println("2 AGGIUNTA COLONNE");
-        System.out.println("3 INSERISCI RECORD \n");
         System.out.print("Scegliere un'opzione: ");
-
-        int choice = scanner.nextInt();
-        if (choice < 0 || choice > 3) {
-            System.out.print("Opzione non valida, scegliere un'opzione: ");
-            choice = scanner.nextInt();
-        }
-
-        return choice;
+        return getChoiceUntilIsValid();
     }
 
     private static void addColumns() {
-        System.out.println("========== Aggiunta Colonne ==========");
+        System.out.println("\n========== Aggiunta Colonne ==========");
         System.out.print("Inserisci il nome della tabella: ");
-        addColumnScript.setTableName(scanner.next().toUpperCase());
+
+        String tableName = scanner.next().toUpperCase();
+
+        AddColumnScript addColumnScript = new AddColumnScript();
+        addColumnScript.setTableName(tableName);
         addColumnScript.generateStatement();
     }
 
-    private static void insertValues() {
-//        System.out.println("========== Inserimento Valori ==========");
-//        System.out.print("Inserisci il nome della tabella: ");
-//        insertIntoScript.insertValues(scanner.next());
+    private static void createTable() {
+        System.out.println("\n========== Creazione Tabella ==========");
+        System.out.print("Inserisci il nome della tabella: ");
+
+        String tableName = scanner.next().toUpperCase();
+
+        CreateTableScript createTableScript = new CreateTableScript();
+        createTableScript.setTableName(tableName);
+        createTableScript.generateStatement();
     }
 
-    private static void createTable() {
-//        System.out.println("========== Creazione Tabella ==========");
-//        System.out.print("Inserisci il nome della tabella: ");
-//        createTableScript.setTableName(scanner.next().toUpperCase());
-//        createTableScript.generateStatement();
+    private static int getChoiceUntilIsValid() {
+        int choice = 0;
+        boolean keepGoing = true;
+
+        while (keepGoing) {
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+
+                if (choice < 0 || choice > 2) {
+                    System.out.print("Opzione non valida, scegliere un'opzione: ");
+                    choice = scanner.nextInt();
+                }
+
+                keepGoing = false;
+            } else {
+                System.out.print("Opzione non valida, scegliere un'opzione: ");
+                scanner.next(); // Consuma l'input non valido per evitare un loop infinito
+            }
+        }
+
+        return choice;
     }
 }
