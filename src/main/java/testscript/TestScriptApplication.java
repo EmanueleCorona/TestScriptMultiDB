@@ -11,6 +11,7 @@ public class TestScriptApplication {
     private static final int ALTER_COLUMN = 3;
     private static final int DROP_COLUMN = 4;
     private static final int RENAME_COLUMN = 5;
+    private static final int RENAME_TABLE = 6;
     private static final Scanner scanner = new Scanner(System.in);
 
 
@@ -45,6 +46,10 @@ public class TestScriptApplication {
                     renameColumn();
                     break;
                 }
+                case RENAME_TABLE: {
+                    renameTable();
+                    break;
+                }
             }
         }
     }
@@ -57,6 +62,7 @@ public class TestScriptApplication {
         System.out.println("3 ALTERAZIONE TIPO CAMPO");
         System.out.println("4 ELIMINAZIONE CAMPI");
         System.out.println("5 RIDENOMINAZIONE CAMPI");
+        System.out.println("6 RIDENOMINAZIONE TABELLA");
         System.out.print("\nScegliere un'opzione: ");
         return getChoiceUntilIsValid();
     }
@@ -69,7 +75,7 @@ public class TestScriptApplication {
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
 
-                if (choice < 0 || choice > 5) {
+                if (choice < 0 || choice > 6) {
                     System.out.print("Opzione non valida, scegliere un'opzione: ");
                     choice = scanner.nextInt();
                 }
@@ -138,5 +144,11 @@ public class TestScriptApplication {
         RenameColumnScript renameColumnScript = new RenameColumnScript();
         renameColumnScript.setTableName(tableName);
         renameColumnScript.generateStatement();
+    }
+
+    private static void renameTable() {
+        System.out.println("\n========== Ridenominazione Tabella ==========");
+        RenameTableScript renameTableScript = new RenameTableScript();
+        renameTableScript.generateStatement();
     }
 }
