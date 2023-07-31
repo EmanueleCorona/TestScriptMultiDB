@@ -1,9 +1,6 @@
 package testscript;
 
-import testscript.script.AddColumnScript;
-import testscript.script.AlterTypeScript;
-import testscript.script.CreateTableScript;
-import testscript.script.DropColumnScript;
+import testscript.script.*;
 
 import java.util.Scanner;
 
@@ -13,6 +10,7 @@ public class TestScriptApplication {
     private static final int ADD_COLUMN = 2;
     private static final int ALTER_COLUMN = 3;
     private static final int DROP_COLUMN = 4;
+    private static final int RENAME_COLUMN = 5;
     private static final Scanner scanner = new Scanner(System.in);
 
 
@@ -43,6 +41,10 @@ public class TestScriptApplication {
                     dropColumn();
                     break;
                 }
+                case RENAME_COLUMN: {
+                    renameColumn();
+                    break;
+                }
             }
         }
     }
@@ -53,9 +55,34 @@ public class TestScriptApplication {
         System.out.println("1 CREAZIONE TABELLA");
         System.out.println("2 AGGIUNTA COLONNE");
         System.out.println("3 ALTERAZIONE TIPO CAMPO");
-        System.out.println("4 ELIMINAZIONE CAMPO");
+        System.out.println("4 ELIMINAZIONE CAMPI");
+        System.out.println("5 RIDENOMINAZIONE CAMPI");
         System.out.print("\nScegliere un'opzione: ");
         return getChoiceUntilIsValid();
+    }
+
+    private static int getChoiceUntilIsValid() {
+        int choice = 0;
+        boolean keepGoing = true;
+
+        while (keepGoing) {
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+
+                if (choice < 0 || choice > 5) {
+                    System.out.print("Opzione non valida, scegliere un'opzione: ");
+                    choice = scanner.nextInt();
+                }
+
+                keepGoing = false;
+
+            } else {
+                System.out.print("Opzione non valida, scegliere un'opzione: ");
+                scanner.next(); // Consuma l'input non valido per evitare un loop infinito
+            }
+        }
+
+        return choice;
     }
 
     private static void addColumns() {
@@ -102,26 +129,14 @@ public class TestScriptApplication {
         dropColumnScript.generateStatement();
     }
 
-    private static int getChoiceUntilIsValid() {
-        int choice = 0;
-        boolean keepGoing = true;
+    private static void renameColumn() {
+        System.out.println("\n========== Ridenominazione Campi ==========");
+        System.out.print("Inserisci il nome della tabella: ");
 
-        while (keepGoing) {
-            if (scanner.hasNextInt()) {
-                choice = scanner.nextInt();
+        String tableName = scanner.next().toUpperCase();
 
-                if (choice < 0 || choice > 4) {
-                    System.out.print("Opzione non valida, scegliere un'opzione: ");
-                    choice = scanner.nextInt();
-                }
-
-                keepGoing = false;
-            } else {
-                System.out.print("Opzione non valida, scegliere un'opzione: ");
-                scanner.next(); // Consuma l'input non valido per evitare un loop infinito
-            }
-        }
-
-        return choice;
+        RenameColumnScript renameColumnScript = new RenameColumnScript();
+        renameColumnScript.setTableName(tableName);
+        renameColumnScript.generateStatement();
     }
 }
