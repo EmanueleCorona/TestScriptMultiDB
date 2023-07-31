@@ -25,6 +25,10 @@ public abstract class ScriptGenerator {
 
     protected abstract void generateStatement();
 
+    protected String getFormattedStatement(String statement) {
+        return statement.replace(TABLE_NAME, tableName);
+    }
+
     protected String getFormattedFieldName(String nameType) {
         return nameType.replaceAll("\\s", "").toUpperCase();
     }
@@ -56,8 +60,17 @@ public abstract class ScriptGenerator {
         return reader.ready();
     }
 
-    protected String getFormattedStatement(String statement) {
-        return statement.replace(TABLE_NAME, tableName);
+    protected boolean containChar(char value, char... characters) {
+        boolean isPresent = false;
+
+        for (char c : characters) {
+            if (value == c) {
+                isPresent = true;
+                break;
+            }
+        }
+
+        return isPresent;
     }
 
     public void setTableName(String tableName) {

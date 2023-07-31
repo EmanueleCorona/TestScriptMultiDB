@@ -14,10 +14,12 @@ public class CreateTableScript extends ScriptGenerator {
     public static final String CREATE_TABLE_FOOTER = "){TABLESPACE {TS_TABLE0}}" + SCRIPT_SEPARETOR;
     public static final String PRIMARY_KEY = "{KEY 10} {PRIMARY_KEY} {AUTO_INCREMENT} {USING_INDEX_TABLESPACE {TS_INDEX0}}," + NEW_LINE;
     public static final String SEQUENCE = "{CREATE_SEQUENCE} S" + TABLE_NAME + SCRIPT_SEPARETOR;
+    private static final String AAZI = "_AAZI {NUMBER 10 0}," + NEW_LINE;
     private static final String DATASTAMP = TABULATION + "DATASTAMP {TIMESTAMP}," + NEW_LINE;
     private static final String LOGIN = TABULATION + "LOGIN {NUMBER 10 0}," + NEW_LINE;
     private static final String ACTION = TABULATION + "ACTION {NUMBER 10 0}" + NEW_LINE;
     private boolean isPrimaryKey = true;
+    private String primaryKey;
 
     @Override
     public void generateStatement() {
@@ -80,8 +82,8 @@ public class CreateTableScript extends ScriptGenerator {
     protected boolean isFieldNameValid(String fieldName) throws IOException {
         boolean isFieldNameValid = true;
 
-        // Controllo per skippare DATASTAMP, LOGIN e ACTION e inserirli alla fine dello script
-        if (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) || fieldName.equals(TestScriptConst.ACTION)) {
+        // Controllo per skippare AAZI, DATASTAMP, LOGIN e ACTION e inserirli alla fine dello script
+        if (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) || fieldName.equals(TestScriptConst.ACTION) || fieldName.contains(TestScriptConst.AAZI)) {
             while (reader.readLine().isEmpty()) ;
             isFieldNameValid = false;
         }
@@ -90,9 +92,12 @@ public class CreateTableScript extends ScriptGenerator {
     }
 
     protected void writeFieldName(String fieldName) throws IOException {
-        // Se il primo campo non contiene "ID" si presume che non ci sia una Primary Key
-        if (!fieldName.endsWith(ID)) isPrimaryKey = false;
+        if (isPrimaryKey) {
+            primaryKey = TABULATION + fieldName;
+        }
+
         writer.append(TABULATION).append(fieldName).append(SPACE);
+
         isFieldName = false;
     }
 
@@ -111,7 +116,7 @@ public class CreateTableScript extends ScriptGenerator {
             if (isLogicStateTable()) {
                 writer.append(fieldType).append(NEW_LINE);
             } else {
-                // DATASTAMP, LOGIN e ACTION vengono automaticamente messi come ultimi campi
+                // AAZI, DATASTAMP, LOGIN e ACTION vengono automaticamente messi come ultimi campi
                 writer.append(fieldType).append(COMMA).append(NEW_LINE);
             }
         }
@@ -132,6 +137,7 @@ public class CreateTableScript extends ScriptGenerator {
 
     protected void writeFooter() throws IOException {
         if (!isLogicStateTable()) {
+            if (isMasterTypeTable()) writer.append(primaryKey).append(AAZI);
             writer.append(DATASTAMP);
             writer.append(LOGIN);
             writer.append(ACTION);
@@ -140,5 +146,18 @@ public class CreateTableScript extends ScriptGenerator {
         } else {
             writer.append(CREATE_TABLE_FOOTER);
         }
+    }
+
+    protected boolean isMasterTypeTable() {
+        boolean isMasterTypeTable;
+
+        // Controllo messo per evitare errori in caso di test del programma
+        if (tableName.length() > 4) {
+            isMasterTypeTable = containChar(tableName.charAt(0), MASTER_TYPE_TABLE) || containChar(tableName.charAt(4), MASTER_TYPE_TABLE);
+        } else {
+            isMasterTypeTable = containChar(tableName.charAt(0), MASTER_TYPE_TABLE);
+        }
+
+        return isMasterTypeTable;
     }
 }
