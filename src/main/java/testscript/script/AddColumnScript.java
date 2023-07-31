@@ -22,7 +22,7 @@ public class AddColumnScript extends ScriptGenerator {
                 if (!row.isEmpty()) {
                     if (isFieldName) {
                         // Fase impostazione nome campo
-                        sql = getFormattedStatement().replace(FIELD_NAME, getFormattedFieldName(row));
+                        sql = getFormattedStatement(ADD_COLUMN).replace(FIELD_NAME, getFormattedFieldName(row));
                         isFieldName = false;
                     } else {
                         // Fase impostazione tipo campo
@@ -45,9 +45,5 @@ public class AddColumnScript extends ScriptGenerator {
         } finally {
             closeResources();
         }
-    }
-
-    protected String getFormattedStatement() {
-        return ADD_COLUMN.replace(TABLE_NAME, tableName);
     }
 }

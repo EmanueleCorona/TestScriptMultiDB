@@ -3,6 +3,7 @@ package testscript;
 import testscript.script.AddColumnScript;
 import testscript.script.AlterTypeScript;
 import testscript.script.CreateTableScript;
+import testscript.script.DropColumnScript;
 
 import java.util.Scanner;
 
@@ -11,6 +12,7 @@ public class TestScriptApplication {
     private static final int TABLE_CREATION = 1;
     private static final int ADD_COLUMN = 2;
     private static final int ALTER_COLUMN = 3;
+    private static final int DROP_COLUMN = 4;
     private static final Scanner scanner = new Scanner(System.in);
 
 
@@ -37,6 +39,10 @@ public class TestScriptApplication {
                     alterType();
                     break;
                 }
+                case DROP_COLUMN: {
+                    dropColumn();
+                    break;
+                }
             }
         }
     }
@@ -47,6 +53,7 @@ public class TestScriptApplication {
         System.out.println("1 CREAZIONE TABELLA");
         System.out.println("2 AGGIUNTA COLONNE");
         System.out.println("3 ALTERAZIONE TIPO CAMPO");
+        System.out.println("4 ELIMINAZIONE CAMPO");
         System.out.print("\nScegliere un'opzione: ");
         return getChoiceUntilIsValid();
     }
@@ -84,6 +91,17 @@ public class TestScriptApplication {
         alterTypeScript.generateStatement();
     }
 
+    private static void dropColumn() {
+        System.out.println("\n========== Eliminazione Campo ==========");
+        System.out.print("Inserisci il nome della tabella: ");
+
+        String tableName = scanner.next().toUpperCase();
+
+        DropColumnScript dropColumnScript = new DropColumnScript();
+        dropColumnScript.setTableName(tableName);
+        dropColumnScript.generateStatement();
+    }
+
     private static int getChoiceUntilIsValid() {
         int choice = 0;
         boolean keepGoing = true;
@@ -92,7 +110,7 @@ public class TestScriptApplication {
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
 
-                if (choice < 0 || choice > 3) {
+                if (choice < 0 || choice > 4) {
                     System.out.print("Opzione non valida, scegliere un'opzione: ");
                     choice = scanner.nextInt();
                 }

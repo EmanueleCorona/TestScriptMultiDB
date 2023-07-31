@@ -22,7 +22,7 @@ public class AlterTypeScript extends ScriptGenerator {
                 if (!row.isEmpty()) {
 
                     if (isFieldName) {
-                        sql = getFormattedStatement().replace(FIELD_NAME, getFormattedFieldName(row));
+                        sql = getFormattedStatement(ALTER_TYPE).replace(FIELD_NAME, getFormattedFieldName(row));
                         isFieldName = false;
                     } else {
                         sql = sql.replace(FIELD_TYPE, getFormattedFieldType(row));
@@ -45,9 +45,5 @@ public class AlterTypeScript extends ScriptGenerator {
         } finally {
             closeResources();
         }
-    }
-
-    protected String getFormattedStatement() {
-        return ALTER_TYPE.replace(TABLE_NAME, tableName);
     }
 }

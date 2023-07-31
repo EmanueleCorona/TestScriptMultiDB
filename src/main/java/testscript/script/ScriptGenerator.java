@@ -5,9 +5,8 @@ import testscript.utils.TestScriptConst;
 
 import java.io.*;
 
-import static testscript.utils.TestScriptConst.COMMA;
+import static testscript.utils.TestScriptConst.*;
 import static testscript.utils.TestScriptConst.FieldType.*;
-import static testscript.utils.TestScriptConst.SPACE;
 
 public abstract class ScriptGenerator {
     protected String tableName;
@@ -55,6 +54,10 @@ public abstract class ScriptGenerator {
 
     protected boolean isThereAnotherRow() throws IOException {
         return reader.ready();
+    }
+
+    protected String getFormattedStatement(String statement) {
+        return statement.replace(TABLE_NAME, tableName);
     }
 
     public void setTableName(String tableName) {
