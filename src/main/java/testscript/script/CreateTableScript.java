@@ -1,13 +1,12 @@
 package testscript.script;
 
-import testscript.utils.TestScriptConst;
 import testscript.utils.TestScriptConst.Error;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static testscript.utils.TestScriptConst.FieldType.*;
 import static testscript.utils.TestScriptConst.*;
+import static testscript.utils.TestScriptConst.FieldType.*;
 
 public class CreateTableScript extends ScriptGenerator {
     public static final String CREATE_TABLE_HEADER = "CREATE TABLE " + TABLE_NAME + " ( " + NEW_LINE;
@@ -43,9 +42,9 @@ public class CreateTableScript extends ScriptGenerator {
             writeFooter();
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(Error.ERR_FILE_NOT_FOUND);
+            throw new RuntimeException(Error.ERR_IO_FILE_NOT_FOUND);
         } catch (IOException e) {
-            throw new RuntimeException(Error.ERR_FILE_WRITING);
+            throw new RuntimeException(Error.ERR_IO_FILE_WRITING);
         } finally {
             closeResources();
         }
@@ -82,10 +81,9 @@ public class CreateTableScript extends ScriptGenerator {
     protected boolean isFieldNameValid(String fieldName) throws IOException {
         boolean isFieldNameValid = true;
 
-        // Controllo per skippare AAZI, DATASTAMP, LOGIN e ACTION e inserirli alla fine dello script
-        if (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) || fieldName.equals(TestScriptConst.ACTION) || fieldName.contains(TestScriptConst.AAZI)) {
-            while (reader.readLine().isEmpty()) ;
+        if (isStandardField(fieldName)) {
             isFieldNameValid = false;
+            while (reader.readLine().isEmpty()); // Continua a leggere per skippare AAZI, DATASTAMP, LOGIN e ACTION
         }
 
         return isFieldNameValid;
@@ -122,19 +120,6 @@ public class CreateTableScript extends ScriptGenerator {
         }
     }
 
-    protected boolean isLogicStateTable() {
-        boolean isLogicStateTable;
-
-        // Controllo messo per evitare errori in caso di test del programma
-        if (tableName.length() > 4) {
-            isLogicStateTable = tableName.charAt(1) == LOGIC_STATE_TABLE || tableName.charAt(4) == LOGIC_STATE_TABLE;
-        } else {
-            isLogicStateTable = tableName.charAt(1) == LOGIC_STATE_TABLE;
-        }
-
-        return isLogicStateTable;
-    }
-
     protected void writeFooter() throws IOException {
         if (!isLogicStateTable()) {
             if (isMasterTypeTable()) writer.append(primaryKey).append(AAZI);
@@ -146,18 +131,5 @@ public class CreateTableScript extends ScriptGenerator {
         } else {
             writer.append(CREATE_TABLE_FOOTER);
         }
-    }
-
-    protected boolean isMasterTypeTable() {
-        boolean isMasterTypeTable;
-
-        // Controllo messo per evitare errori in caso di test del programma
-        if (tableName.length() > 4) {
-            isMasterTypeTable = containChar(tableName.charAt(0), MASTER_TYPE_TABLE) || containChar(tableName.charAt(4), MASTER_TYPE_TABLE);
-        } else {
-            isMasterTypeTable = containChar(tableName.charAt(0), MASTER_TYPE_TABLE);
-        }
-
-        return isMasterTypeTable;
     }
 }

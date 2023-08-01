@@ -39,9 +39,9 @@ public class AlterTypeScript extends ScriptGenerator {
             }
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(Error.ERR_FILE_NOT_FOUND);
+            throw new RuntimeException(Error.ERR_IO_FILE_NOT_FOUND);
         } catch (IOException e) {
-            throw new RuntimeException(Error.ERR_FILE_WRITING);
+            throw new RuntimeException(Error.ERR_IO_FILE_WRITING);
         } finally {
             closeResources();
         }

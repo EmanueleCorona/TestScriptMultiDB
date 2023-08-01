@@ -1,11 +1,12 @@
 package testscript.script;
 
-import testscript.utils.TestScriptConst;
+import testscript.utils.TestScriptConst.Error;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static testscript.utils.TestScriptConst.*;
+import static testscript.utils.TestScriptConst.SCRIPT_SEPARETOR;
+import static testscript.utils.TestScriptConst.TABLE_NAME;
 
 public class RenameColumnScript extends ScriptGenerator {
     private static final String OLD_COLUMN_NAME = "OLD_COLUMN_NAME";
@@ -32,9 +33,9 @@ public class RenameColumnScript extends ScriptGenerator {
             }
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(TestScriptConst.Error.ERR_FILE_NOT_FOUND);
+            throw new RuntimeException(Error.ERR_IO_FILE_NOT_FOUND);
         } catch (IOException e) {
-            throw new RuntimeException(TestScriptConst.Error.ERR_FILE_WRITING);
+            throw new RuntimeException(Error.ERR_IO_FILE_WRITING);
         } finally {
             closeResources();
         }

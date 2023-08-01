@@ -1,6 +1,10 @@
 package testscript.utils;
 
-import java.io.*;
+import testscript.utils.TestScriptConst.Error;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 
 public class FileUtils {
     public static void closeBufferedReader(BufferedReader reader) {
@@ -9,7 +13,7 @@ public class FileUtils {
                 reader.close();
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore chiusura file di lettura");
+            throw new RuntimeException(Error.ERR_IO_CLOSE_READER);
         }
     }
 
@@ -19,7 +23,7 @@ public class FileUtils {
                 writer.close();
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore chiusura file di scrittura");
+            throw new RuntimeException(Error.ERR_IO_CLOSE_WRITER);
         }
     }
 }

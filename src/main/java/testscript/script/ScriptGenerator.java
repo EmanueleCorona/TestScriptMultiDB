@@ -2,6 +2,7 @@ package testscript.script;
 
 import testscript.utils.FileUtils;
 import testscript.utils.TestScriptConst;
+import testscript.utils.TestScriptConst.Error;
 
 import java.io.*;
 
@@ -15,8 +16,8 @@ public abstract class ScriptGenerator {
     protected String row;
     protected BufferedWriter writer;
     protected BufferedReader reader;
-    public static final String READER_PATH = "src/main/files/fields.txt";
-    public static final String WRITER_PATH = "src/main/files/script.sql";
+    public static final String READER_PATH = "src/main/java/testscript/files/fields.txt";
+    public static final String WRITER_PATH = "src/main/java/testscript/files/script.sql";
 
     public ScriptGenerator() {
         super();
@@ -60,6 +61,37 @@ public abstract class ScriptGenerator {
         return reader.ready();
     }
 
+    protected boolean isStandardField(String fieldName) {
+        return (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) ||
+                fieldName.equals(TestScriptConst.ACTION) || fieldName.contains(TestScriptConst.AAZI));
+    }
+
+    protected boolean isLogicStateTable() {
+        boolean isLogicStateTable;
+
+        // Controllo messo per evitare errori in caso di test del programma
+        if (tableName.length() > 4) {
+            isLogicStateTable = containChar(tableName.charAt(0), LOGIC_STATE_TABLE) || containChar(tableName.charAt(4), LOGIC_STATE_TABLE);
+        } else {
+            isLogicStateTable = containChar(tableName.charAt(0), LOGIC_STATE_TABLE);
+        }
+
+        return isLogicStateTable;
+    }
+
+    protected boolean isMasterTypeTable() {
+        boolean isMasterTypeTable;
+
+        // Controllo messo per evitare errori in caso di test del programma
+        if (tableName.length() > 4) {
+            isMasterTypeTable = containChar(tableName.charAt(0), MASTER_TYPE_TABLE) || containChar(tableName.charAt(4), MASTER_TYPE_TABLE);
+        } else {
+            isMasterTypeTable = containChar(tableName.charAt(0), MASTER_TYPE_TABLE);
+        }
+
+        return isMasterTypeTable;
+    }
+
     protected boolean containChar(char value, char... characters) {
         boolean isPresent = false;
 
@@ -83,9 +115,9 @@ public abstract class ScriptGenerator {
             writer = new BufferedWriter(new FileWriter(WRITER_PATH));
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("File non trovato");
+            throw new RuntimeException(Error.ERR_IO_FILE_NOT_FOUND);
         } catch (IOException e) {
-            throw new RuntimeException("Errore durante l'operazione di scrittura su file");
+            throw new RuntimeException(Error.ERR_IO_FILE_WRITING);
         }
     }
 

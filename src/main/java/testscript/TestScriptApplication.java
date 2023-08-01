@@ -1,14 +1,18 @@
 package testscript;
 
 import testscript.script.*;
+import testscript.utils.TestScriptConst.Menu;
 
 import java.util.Scanner;
 
+import static testscript.utils.TestScriptConst.Error.ERR_OPTION_NOT_VALID;
+import static testscript.utils.TestScriptConst.NEW_LINE;
+
 public class TestScriptApplication {
     private static final int EXIT = 0;
-    private static final int TABLE_CREATION = 1;
+    private static final int CREATE_TABLE = 1;
     private static final int ADD_COLUMN = 2;
-    private static final int ALTER_COLUMN = 3;
+    private static final int ALTER_TYPE = 3;
     private static final int DROP_COLUMN = 4;
     private static final int RENAME_COLUMN = 5;
     private static final int RENAME_TABLE = 6;
@@ -26,15 +30,15 @@ public class TestScriptApplication {
                     keepGoing = false;
                     break;
                 }
-                case TABLE_CREATION: {
+                case CREATE_TABLE: {
                     createTable();
                     break;
                 }
                 case ADD_COLUMN: {
-                    addColumns();
+                    addColumn();
                     break;
                 }
-                case ALTER_COLUMN: {
+                case ALTER_TYPE: {
                     alterType();
                     break;
                 }
@@ -55,15 +59,15 @@ public class TestScriptApplication {
     }
 
     private static int showMenu() {
-        System.out.println("\n========== Test Script MultiDb ==========");
-        System.out.println("0 ESCI");
-        System.out.println("1 CREAZIONE TABELLA");
-        System.out.println("2 AGGIUNTA COLONNE");
-        System.out.println("3 ALTERAZIONE TIPO CAMPO");
-        System.out.println("4 ELIMINAZIONE CAMPI");
-        System.out.println("5 RIDENOMINAZIONE CAMPI");
-        System.out.println("6 RIDENOMINAZIONE TABELLA");
-        System.out.print("\nScegliere un'opzione: ");
+        System.out.println(NEW_LINE + "========== Test Script MultiDB ==========");
+        System.out.println(Menu.EXIT);
+        System.out.println(Menu.CREATE_TABLE);
+        System.out.println(Menu.ADD_COLUMN);
+        System.out.println(Menu.ALTER_TYPE);
+        System.out.println(Menu.DROP_COLUMN);
+        System.out.println(Menu.RENAME_COLUMN);
+        System.out.println(Menu.RENAME_TABLE);
+        System.out.print(NEW_LINE + "Scegliere un'opzione: ");
         return getChoiceUntilIsValid();
     }
 
@@ -76,14 +80,14 @@ public class TestScriptApplication {
                 choice = scanner.nextInt();
 
                 if (choice < 0 || choice > 6) {
-                    System.out.print("Opzione non valida, scegliere un'opzione: ");
+                    System.out.print(ERR_OPTION_NOT_VALID);
                     choice = scanner.nextInt();
                 }
 
                 keepGoing = false;
 
             } else {
-                System.out.print("Opzione non valida, scegliere un'opzione: ");
+                System.out.print(ERR_OPTION_NOT_VALID);
                 scanner.next(); // Consuma l'input non valido per evitare un loop infinito
             }
         }
@@ -91,8 +95,8 @@ public class TestScriptApplication {
         return choice;
     }
 
-    private static void addColumns() {
-        System.out.println("\n========== Aggiunta Colonne ==========");
+    private static void addColumn() {
+        System.out.println(NEW_LINE + "========== Aggiunta Colonne ==========");
         System.out.print("Inserisci il nome della tabella: ");
 
         String tableName = scanner.next().toUpperCase();
@@ -103,7 +107,7 @@ public class TestScriptApplication {
     }
 
     private static void createTable() {
-        System.out.println("\n========== Creazione Tabella ==========");
+        System.out.println(NEW_LINE + "========== Creazione Tabella ==========");
         System.out.print("Inserisci il nome della tabella: ");
 
         String tableName = scanner.next().toUpperCase();
@@ -114,7 +118,7 @@ public class TestScriptApplication {
     }
 
     private static void alterType() {
-        System.out.println("\n========== Alterazione Tipo Campo ==========");
+        System.out.println(NEW_LINE + "========== Alterazione Tipo Campo ==========");
         System.out.print("Inserisci il nome della tabella: ");
 
         String tableName = scanner.next().toUpperCase();
@@ -125,7 +129,7 @@ public class TestScriptApplication {
     }
 
     private static void dropColumn() {
-        System.out.println("\n========== Eliminazione Campo ==========");
+        System.out.println(NEW_LINE + "========== Eliminazione Campo ==========");
         System.out.print("Inserisci il nome della tabella: ");
 
         String tableName = scanner.next().toUpperCase();
@@ -136,7 +140,7 @@ public class TestScriptApplication {
     }
 
     private static void renameColumn() {
-        System.out.println("\n========== Ridenominazione Campi ==========");
+        System.out.println(NEW_LINE + "========== Ridenominazione Campi ==========");
         System.out.print("Inserisci il nome della tabella: ");
 
         String tableName = scanner.next().toUpperCase();
@@ -147,7 +151,7 @@ public class TestScriptApplication {
     }
 
     private static void renameTable() {
-        System.out.println("\n========== Ridenominazione Tabella ==========");
+        System.out.println(NEW_LINE + "========== Ridenominazione Tabella ==========");
         RenameTableScript renameTableScript = new RenameTableScript();
         renameTableScript.generateStatement();
     }
