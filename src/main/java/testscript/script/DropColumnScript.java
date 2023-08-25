@@ -8,7 +8,7 @@ import java.io.IOException;
 import static testscript.utils.TestScriptConst.*;
 
 public class DropColumnScript extends ScriptGenerator {
-    private static final String DROP_COLUMN = "ALTER TABLE " + TABLE_NAME + " DROP COLUMN " + FIELD_NAME + SCRIPT_SEPARETOR;
+    private static final String DROP_COLUMN = "ALTER TABLE" + SPACE + TABLE_NAME + SPACE + "DROP COLUMN" + SPACE + FIELD_NAME + SCRIPT_SEPARETOR;
 
 
     @Override

@@ -8,7 +8,7 @@ import java.io.IOException;
 import static testscript.utils.TestScriptConst.*;
 
 public class AlterTypeScript extends ScriptGenerator {
-    private static final String ALTER_TYPE = "{ALTER_TYPE " + TABLE_NAME + " " + FIELD_NAME + " {" + FIELD_TYPE + "}}" + SCRIPT_SEPARETOR;
+    private static final String ALTER_TYPE = "{ALTER_TYPE" + SPACE + TABLE_NAME + SPACE + FIELD_NAME + SPACE + FIELD_TYPE + "}" + SCRIPT_SEPARETOR;
 
     @Override
     public void generateStatement() {

@@ -5,15 +5,17 @@ import testscript.utils.TestScriptConst;
 import testscript.utils.TestScriptConst.Error;
 
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static testscript.utils.TestScriptConst.*;
 import static testscript.utils.TestScriptConst.FieldType.*;
 
 public abstract class ScriptGenerator {
     protected String tableName;
-    protected boolean isFieldName = true;
 
     protected String row;
+    protected boolean isFieldName = true;
     protected BufferedWriter writer;
     protected BufferedReader reader;
     public static final String READER_PATH = "src/main/java/testscript/files/fields.txt";
@@ -30,35 +32,101 @@ public abstract class ScriptGenerator {
         return statement.replace(TABLE_NAME, tableName);
     }
 
-    protected String getFormattedFieldName(String nameType) {
-        return nameType.replaceAll("\\s", "").toUpperCase();
-    }
-
-    protected String getFormattedFieldType(String fieldType) {
-        if (fieldType.contains(NUMBER)) {
-            if (fieldType.contains(COMMA)) {
-                return NUMBER + SPACE + fieldType.replaceAll("[^0-9,]", "").replace(COMMA, SPACE);
-            } else {
-                return NUMBER + SPACE + fieldType.replaceAll("[^0-9]", "") + " 0";
-            }
-        } else if (fieldType.contains(VARCHAR)) {
-            fieldType = fieldType.replaceFirst("VARCHAR2", "");
-            return VARCHAR + SPACE + fieldType.replaceAll("[^0-9]", "");
-
-        } else if (fieldType.contains(CHAR)) {
-            return CHAR + " 1";
-
-        } else {
-            return TIMESTAMP;
-        }
-    }
-
     protected void writeHeader() throws IOException {
         writer.append(TestScriptConst.GEOCALL_HEADER);
     }
 
-    protected boolean isThereAnotherRow() throws IOException {
-        return reader.ready();
+    protected String getFormattedFieldName(String nameType) {
+        return getTrimmedString(nameType).toUpperCase();
+    }
+
+    protected String getFormattedFieldType(String fieldType) {
+        StringBuilder formattedType = new StringBuilder();
+
+        String upperFieldType = fieldType.toUpperCase();
+        String trimmedFieldType = getTrimmedString(upperFieldType);
+
+        if (trimmedFieldType.contains(NUMBER)) {
+            setNumberFieldType(upperFieldType, formattedType);
+
+        } else if (trimmedFieldType.contains(VARCHAR)) {
+            setVarcharFieldType(upperFieldType, formattedType);
+
+        } else if (trimmedFieldType.contains(CHAR)) {
+            formattedType.append(CHAR).append(SPACE).append("1");
+
+        } else if (trimmedFieldType.contains(TIMESTAMP)) {
+            formattedType.append(TIMESTAMP);
+
+        } else {
+            formattedType.append(WRONG_DATATYPE);
+        }
+
+        setDataTypeBraces(formattedType);
+
+        return formattedType.toString();
+    }
+
+    protected void setNumberFieldType(String fieldType, StringBuilder formattedType) {
+        String numberValue = getNumberValue(fieldType);
+
+        if (!numberValue.isEmpty()) {
+            formattedType.append(NUMBER).append(SPACE).append(numberValue);
+        } else {
+            formattedType.append(WRONG_DATATYPE);
+        }
+    }
+
+    protected void setVarcharFieldType(String fieldType, StringBuilder formattedType) {
+        String varcharValue = getVarcharValue(fieldType);
+
+        if (!varcharValue.isEmpty()) {
+            formattedType.append(VARCHAR).append(SPACE).append(varcharValue);
+        } else {
+            formattedType.append(WRONG_DATATYPE);
+        }
+    }
+
+    protected String getNumberValue(String fieldType) {
+        String fieldValue = getBracketsValue(fieldType);
+
+        if (!fieldValue.isEmpty()) {
+            if (fieldType.contains(COMMA)) {
+                fieldValue = fieldValue.replace(COMMA, SPACE);
+            } else {
+                fieldValue = fieldValue.concat(SPACE).concat("0");
+            }
+        }
+
+        return fieldValue;
+    }
+
+    protected String getVarcharValue(String fieldType) {
+        return getBracketsValue(fieldType);
+    }
+
+    protected String getBracketsValue(String fieldType) {
+        Pattern regex = Pattern.compile("\\((.*?)\\)");
+        Matcher matcher = regex.matcher(fieldType);
+
+        String result;
+
+        // Controllo per verificare che siano presenti le parentesi
+        if (matcher.find()) {
+            result = matcher.group(1);
+        } else {
+            if (fieldType.contains(NUMBER)) {
+                result = fieldType.replaceAll(".*?(NUMBER)", "$1").replaceAll("NUMBER[^ ]*", "").replaceAll("\\s", "");
+            } else {
+                result = fieldType.replaceAll(".*?(VARCHAR)", "$1").replaceAll("VARCHAR[^ ]*", "").replaceAll("\\s", "");
+            }
+        }
+
+        return getTrimmedString(result).replaceAll("[^0-9,]", "");
+    }
+
+    protected void setDataTypeBraces(StringBuilder fieldType) {
+        fieldType.insert(0, "{").append("}");
     }
 
     protected boolean isStandardField(String fieldName) {
@@ -92,6 +160,10 @@ public abstract class ScriptGenerator {
         return isMasterTypeTable;
     }
 
+    protected boolean isThereAnotherRow() throws IOException {
+        return reader.ready();
+    }
+
     protected boolean containChar(char value, char... characters) {
         boolean isPresent = false;
 
@@ -103,6 +175,10 @@ public abstract class ScriptGenerator {
         }
 
         return isPresent;
+    }
+
+    protected String getTrimmedString(String str) {
+        return str.replaceAll("\\s", "");
     }
 
     public void setTableName(String tableName) {

@@ -8,7 +8,7 @@ import java.io.IOException;
 import static testscript.utils.TestScriptConst.*;
 
 public class AddColumnScript extends ScriptGenerator {
-    private static final String ADD_COLUMN = "{ALTER_ADD_COLUMN " + TABLE_NAME + " " + FIELD_NAME + " {" + FIELD_TYPE + "}}" + SCRIPT_SEPARETOR;
+    private static final String ADD_COLUMN = "{ALTER_ADD_COLUMN" + SPACE + TABLE_NAME + SPACE + FIELD_NAME + SPACE + FIELD_TYPE + "}" + SCRIPT_SEPARETOR;
 
     @Override
     public void generateStatement() {

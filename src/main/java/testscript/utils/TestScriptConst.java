@@ -1,6 +1,7 @@
 package testscript.utils;
 
 public class TestScriptConst {
+
     public static final String SPACE = " ";
     public static final String COMMA = ",";
     public static final String NEW_LINE = "\n";
@@ -33,6 +34,7 @@ public class TestScriptConst {
         public static final String VARCHAR = "VARCHAR";
         public static final String CHAR = "CHAR";
         public static final String TIMESTAMP = "TIMESTAMP";
+        public static final String WRONG_DATATYPE = "WRONG_DATATYPE";
     }
 
     public static class Error {

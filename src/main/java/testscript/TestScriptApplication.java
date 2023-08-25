@@ -80,14 +80,14 @@ public class TestScriptApplication {
                 choice = scanner.nextInt();
 
                 if (choice < 0 || choice > 6) {
-                    System.out.print(ERR_OPTION_NOT_VALID);
+                    System.err.print(ERR_OPTION_NOT_VALID);
                     choice = scanner.nextInt();
                 }
 
                 keepGoing = false;
 
             } else {
-                System.out.print(ERR_OPTION_NOT_VALID);
+                System.err.print(ERR_OPTION_NOT_VALID);
                 scanner.next(); // Consuma l'input non valido per evitare un loop infinito
             }
         }

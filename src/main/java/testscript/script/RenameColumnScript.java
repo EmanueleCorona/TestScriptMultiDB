@@ -5,13 +5,12 @@ import testscript.utils.TestScriptConst.Error;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static testscript.utils.TestScriptConst.SCRIPT_SEPARETOR;
-import static testscript.utils.TestScriptConst.TABLE_NAME;
+import static testscript.utils.TestScriptConst.*;
 
 public class RenameColumnScript extends ScriptGenerator {
     private static final String OLD_COLUMN_NAME = "OLD_COLUMN_NAME";
     private static final String NEW_COLUMN_NAME = "NEW_COLUMN_NAME";
-    private static final String RENAME_COLUMN = "ALTER TABLE " + TABLE_NAME + " RENAME COLUMN " + OLD_COLUMN_NAME + " TO " + NEW_COLUMN_NAME + SCRIPT_SEPARETOR;
+    private static final String RENAME_COLUMN = "ALTER TABLE" + SPACE + TABLE_NAME + SPACE + "RENAME COLUMN" + SPACE + OLD_COLUMN_NAME + SPACE + "TO" + SPACE + NEW_COLUMN_NAME + SCRIPT_SEPARETOR;
 
 
     @Override
@@ -25,8 +24,8 @@ public class RenameColumnScript extends ScriptGenerator {
                     String[] fieldNames = row.split(";");
 
                     sql = getFormattedStatement(RENAME_COLUMN);
-                    sql = sql.replace(OLD_COLUMN_NAME, fieldNames[0]);
-                    sql = sql.replace(NEW_COLUMN_NAME, fieldNames[1]);
+                    sql = sql.replace(OLD_COLUMN_NAME, getFormattedFieldName(fieldNames[0]));
+                    sql = sql.replace(NEW_COLUMN_NAME, getFormattedFieldName(fieldNames[1]));
 
                     writer.write(sql);
                 }

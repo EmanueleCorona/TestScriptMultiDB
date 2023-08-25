@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static testscript.utils.TestScriptConst.*;
-import static testscript.utils.TestScriptConst.FieldType.*;
 
 public class CreateTableScript extends ScriptGenerator {
     public static final String CREATE_TABLE_HEADER = "CREATE TABLE " + TABLE_NAME + " ( " + NEW_LINE;
@@ -54,28 +53,6 @@ public class CreateTableScript extends ScriptGenerator {
     protected void writeHeader() throws IOException {
         super.writeHeader();
         writer.append(CREATE_TABLE_HEADER.replace(TABLE_NAME, tableName));
-    }
-
-    @Override
-    protected String getFormattedFieldType(String fieldType) {
-        if (fieldType.contains(NUMBER)) {
-            if (fieldType.contains(COMMA)) {
-                fieldType = "{" + NUMBER + SPACE + fieldType.replaceAll("[^0-9,]", "").replace(COMMA, SPACE).concat("}");
-            } else {
-                fieldType = "{" + NUMBER + SPACE + fieldType.replaceAll("[^0-9]", "") + " 0}";
-            }
-        } else if (fieldType.contains(VARCHAR)) {
-            fieldType = fieldType.replaceFirst("VARCHAR2", "");
-            return "{" + VARCHAR + SPACE + fieldType.replaceAll("[^0-9]", "") + "}";
-
-        } else if (fieldType.contains(CHAR)) {
-            return "{" + CHAR + " 1" + "}";
-
-        } else {
-            return "{" + TIMESTAMP + "}";
-        }
-
-        return fieldType;
     }
 
     protected boolean isFieldNameValid(String fieldName) throws IOException {
