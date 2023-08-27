@@ -13,6 +13,7 @@ import static testscript.utils.TestScriptConst.FieldType.*;
 
 public abstract class ScriptGenerator {
     protected String tableName;
+    protected String tableAcronym;
 
     protected String row;
     protected boolean isFieldName = true;
@@ -36,8 +37,23 @@ public abstract class ScriptGenerator {
         writer.append(TestScriptConst.GEOCALL_HEADER);
     }
 
-    protected String getFormattedFieldName(String nameType) {
-        return getTrimmedString(nameType).toUpperCase();
+    protected String getFormattedFieldName(String fieldName) {
+        String tmpFieldName = getTrimmedString(fieldName).toUpperCase();
+
+        // Controllo messo per evitare errori nel programma
+        if (tmpFieldName.length() < 8) {
+            return tmpFieldName;
+        }
+
+        if (this instanceof CreateTableScript || this instanceof AddColumnScript || this instanceof AlterTypeScript) {
+            if (tableAcronym == null) {
+                tableAcronym = tmpFieldName.substring(0, 8);
+            }
+
+            tmpFieldName = tmpFieldName.replace(tmpFieldName.substring(0, 8), tableAcronym);
+        }
+
+        return tmpFieldName;
     }
 
     protected String getFormattedFieldType(String fieldType) {
