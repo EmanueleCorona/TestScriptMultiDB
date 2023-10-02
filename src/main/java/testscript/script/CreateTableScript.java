@@ -99,7 +99,7 @@ public class CreateTableScript extends ScriptGenerator {
 
     protected void writeFooter() throws IOException {
         if (!isLogicStateTable()) {
-            if (isMasterTypeTable()) writer.append(primaryKey).append(AAZI);
+            writeFactory();
             writer.append(DATASTAMP);
             writer.append(LOGIN);
             writer.append(ACTION);
@@ -107,6 +107,21 @@ public class CreateTableScript extends ScriptGenerator {
             writer.append(SEQUENCE.replace(TABLE_NAME, tableName));
         } else {
             writer.append(CREATE_TABLE_FOOTER);
+        }
+    }
+
+    protected void writeFactory() throws IOException {
+        if (isMasterTypeTable()) {
+            String factory;
+
+            if (primaryKey.contains("_")) {
+                int charIndex = primaryKey.indexOf("_");
+                factory = primaryKey.substring(0, charIndex).concat(AAZI);
+            } else {
+                factory = primaryKey.concat(AAZI);
+            }
+
+            writer.append(factory);
         }
     }
 }
