@@ -13,7 +13,7 @@ public class FileUtils {
                 reader.close();
             }
         } catch (IOException e) {
-            throw new RuntimeException(Error.ERR_IO_CLOSE_READER);
+            throw new RuntimeException(Error.CLOSING_READER);
         }
     }
 
@@ -23,7 +23,7 @@ public class FileUtils {
                 writer.close();
             }
         } catch (IOException e) {
-            throw new RuntimeException(Error.ERR_IO_CLOSE_WRITER);
+            throw new RuntimeException(Error.CLOSING_WRITER);
         }
     }
 }

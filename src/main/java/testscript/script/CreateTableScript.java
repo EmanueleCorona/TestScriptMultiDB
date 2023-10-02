@@ -41,9 +41,9 @@ public class CreateTableScript extends ScriptGenerator {
             writeFooter();
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(Error.ERR_IO_FILE_NOT_FOUND);
+            throw new RuntimeException(Error.FILE_NOT_FOUND);
         } catch (IOException e) {
-            throw new RuntimeException(Error.ERR_IO_FILE_WRITING);
+            throw new RuntimeException(Error.FILE_WRITING);
         } finally {
             closeResources();
         }
@@ -55,7 +55,7 @@ public class CreateTableScript extends ScriptGenerator {
         writer.append(CREATE_TABLE_HEADER.replace(TABLE_NAME, tableName));
     }
 
-    protected boolean isFieldNameValid(String fieldName) throws IOException {
+    private boolean isFieldNameValid(String fieldName) throws IOException {
         boolean isFieldNameValid = true;
 
         if (isStandardField(fieldName)) {
@@ -66,7 +66,7 @@ public class CreateTableScript extends ScriptGenerator {
         return isFieldNameValid;
     }
 
-    protected void writeFieldName(String fieldName) throws IOException {
+    private void writeFieldName(String fieldName) throws IOException {
         if (isPrimaryKey) {
             primaryKey = TABULATION + fieldName;
         }
@@ -76,7 +76,7 @@ public class CreateTableScript extends ScriptGenerator {
         isFieldName = false;
     }
 
-    protected void writeFieldType(String fieldType) throws IOException {
+    private void writeFieldType(String fieldType) throws IOException {
         isFieldName = true;
 
         if (isPrimaryKey) {
@@ -97,7 +97,7 @@ public class CreateTableScript extends ScriptGenerator {
         }
     }
 
-    protected void writeFooter() throws IOException {
+    private void writeFooter() throws IOException {
         if (!isLogicStateTable()) {
             writeFactory();
             writer.append(DATASTAMP);
@@ -110,8 +110,8 @@ public class CreateTableScript extends ScriptGenerator {
         }
     }
 
-    protected void writeFactory() throws IOException {
-        if (isMasterTypeTable()) {
+    private void writeFactory() throws IOException {
+        if (isMasterOrTypeTable()) {
             String factory;
 
             if (primaryKey.contains("_")) {

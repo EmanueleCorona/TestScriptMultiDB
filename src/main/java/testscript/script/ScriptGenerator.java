@@ -12,13 +12,13 @@ import static testscript.utils.TestScriptConst.*;
 import static testscript.utils.TestScriptConst.FieldType.*;
 
 public abstract class ScriptGenerator {
+    protected BufferedWriter writer;
+    protected BufferedReader reader;
     protected String tableName;
     protected String tableAcronym;
 
     protected String row;
     protected boolean isFieldName = true;
-    protected BufferedWriter writer;
-    protected BufferedReader reader;
     public static final String READER_PATH = "src/main/java/testscript/files/fields.txt";
     public static final String WRITER_PATH = "src/main/java/testscript/files/script.sql";
 
@@ -163,7 +163,7 @@ public abstract class ScriptGenerator {
         return isLogicStateTable;
     }
 
-    protected boolean isMasterTypeTable() {
+    protected boolean isMasterOrTypeTable() {
         boolean isMasterTypeTable;
 
         // Controllo messo per evitare errori in caso di test del programma
@@ -207,9 +207,9 @@ public abstract class ScriptGenerator {
             writer = new BufferedWriter(new FileWriter(WRITER_PATH));
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(Error.ERR_IO_FILE_NOT_FOUND);
+            throw new RuntimeException(Error.FILE_NOT_FOUND);
         } catch (IOException e) {
-            throw new RuntimeException(Error.ERR_IO_FILE_WRITING);
+            throw new RuntimeException(Error.FILE_WRITING);
         }
     }
 

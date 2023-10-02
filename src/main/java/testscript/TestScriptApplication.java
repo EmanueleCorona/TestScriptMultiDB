@@ -1,11 +1,11 @@
 package testscript;
 
 import testscript.script.*;
+import testscript.utils.TestScriptConst.Error;
 import testscript.utils.TestScriptConst.Menu;
 
 import java.util.Scanner;
 
-import static testscript.utils.TestScriptConst.Error.ERR_OPTION_NOT_VALID;
 import static testscript.utils.TestScriptConst.NEW_LINE;
 
 public class TestScriptApplication {
@@ -59,7 +59,7 @@ public class TestScriptApplication {
     }
 
     private static int showMenu() {
-        System.out.println(NEW_LINE + "========== Test Script MultiDB ==========");
+        System.out.println(Menu.HEADER);
         System.out.println(Menu.EXIT);
         System.out.println(Menu.CREATE_TABLE);
         System.out.println(Menu.ADD_COLUMN);
@@ -67,7 +67,7 @@ public class TestScriptApplication {
         System.out.println(Menu.DROP_COLUMN);
         System.out.println(Menu.RENAME_COLUMN);
         System.out.println(Menu.RENAME_TABLE);
-        System.out.print(NEW_LINE + "Scegliere un'opzione: ");
+        System.out.print(Menu.CHOOSE_OPTION);
         return getChoiceUntilIsValid();
     }
 
@@ -80,14 +80,14 @@ public class TestScriptApplication {
                 choice = scanner.nextInt();
 
                 if (choice < 0 || choice > 6) {
-                    System.err.print(ERR_OPTION_NOT_VALID);
+                    System.err.print(Error.OPTION_NOT_VALID);
                     choice = scanner.nextInt();
                 }
 
                 keepGoing = false;
 
             } else {
-                System.err.print(ERR_OPTION_NOT_VALID);
+                System.err.print(Error.OPTION_NOT_VALID);
                 scanner.next(); // Consuma l'input non valido per evitare un loop infinito
             }
         }
