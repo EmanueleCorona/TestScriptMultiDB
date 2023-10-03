@@ -75,7 +75,7 @@ public abstract class ScriptGenerator {
         } else if (trimmedFieldType.contains(CHAR)) {
             formattedType.append(CHAR).append(SPACE).append("1");
 
-        } else if (trimmedFieldType.contains(TIMESTAMP)) {
+        } else if (isDateType(trimmedFieldType)) {
             formattedType.append(TIMESTAMP);
 
         } else if (trimmedFieldType.contains(CLOB)) {
@@ -152,8 +152,12 @@ public abstract class ScriptGenerator {
         fieldType.insert(0, "{").append("}");
     }
 
+    protected boolean isDateType(String fieldType) {
+        return (fieldType.contains(DATE) || fieldType.contains(DATETIME) || fieldType.contains(TIMESTAMP));
+    }
+
     protected boolean isStandardField(String fieldName) {
-        return (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) || fieldName.equals(TestScriptConst.ACTION) || fieldName.contains(TestScriptConst.AAZI));
+        return (fieldName.equals(DATASTAMP) || fieldName.equals(LOGIN) || fieldName.equals(ACTION) || fieldName.contains(AAZI));
     }
 
     protected boolean isLogicStateTable() {
