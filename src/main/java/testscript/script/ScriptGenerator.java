@@ -40,6 +40,10 @@ public abstract class ScriptGenerator {
     protected String getFormattedFieldName(String fieldName) {
         String tmpFieldName = getTrimmedString(fieldName).toUpperCase();
 
+        if (isStandardField(tmpFieldName)){
+            return tmpFieldName;
+        }
+
         // Controllo messo per evitare errori nel programma
         if (tmpFieldName.length() < 8) {
             return tmpFieldName;
