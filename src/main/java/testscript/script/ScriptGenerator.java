@@ -40,7 +40,7 @@ public abstract class ScriptGenerator {
     protected String getFormattedFieldName(String fieldName) {
         String tmpFieldName = getTrimmedString(fieldName).toUpperCase();
 
-        if (isStandardField(tmpFieldName)){
+        if (isStandardField(tmpFieldName)) {
             return tmpFieldName;
         }
 
@@ -77,6 +77,9 @@ public abstract class ScriptGenerator {
 
         } else if (trimmedFieldType.contains(TIMESTAMP)) {
             formattedType.append(TIMESTAMP);
+
+        } else if (trimmedFieldType.contains(CLOB)) {
+            formattedType.append(CLOB);
 
         } else {
             formattedType.append(WRONG_DATATYPE);
@@ -150,8 +153,7 @@ public abstract class ScriptGenerator {
     }
 
     protected boolean isStandardField(String fieldName) {
-        return (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) ||
-                fieldName.equals(TestScriptConst.ACTION) || fieldName.contains(TestScriptConst.AAZI));
+        return (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) || fieldName.equals(TestScriptConst.ACTION) || fieldName.contains(TestScriptConst.AAZI));
     }
 
     protected boolean isLogicStateTable() {
