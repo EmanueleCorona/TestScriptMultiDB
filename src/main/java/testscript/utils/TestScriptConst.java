@@ -34,6 +34,8 @@ public class TestScriptConst {
         public static final String NUMBER = "NUMBER";
         public static final String VARCHAR = "VARCHAR";
         public static final String CHAR = "CHAR";
+        public static final String DATE = "DATE";
+        public static final String DATETIME = "DATETIME";
         public static final String TIMESTAMP = "TIMESTAMP";
         public static final String CLOB = "CLOB";
         public static final String WRONG_DATATYPE = "WRONG_DATATYPE";
