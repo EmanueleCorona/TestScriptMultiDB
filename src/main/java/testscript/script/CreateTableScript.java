@@ -12,7 +12,7 @@ public class CreateTableScript extends ScriptGenerator {
     public static final String CREATE_TABLE_FOOTER = "){TABLESPACE {TS_TABLE0}}" + SCRIPT_SEPARETOR;
     public static final String PRIMARY_KEY = "{KEY 10} {PRIMARY_KEY} {AUTO_INCREMENT} {USING_INDEX_TABLESPACE {TS_INDEX0}}," + NEW_LINE;
     public static final String SEQUENCE = "{CREATE_SEQUENCE} S" + TABLE_NAME + SCRIPT_SEPARETOR;
-    private static final String AAZI = "_AAZI {NUMBER 10 0}," + NEW_LINE;
+    private static final String ACOM = "_ACOM {NUMBER 10 0}," + NEW_LINE;
     private static final String DATASTAMP = TABULATION + "DATASTAMP {TIMESTAMP}," + NEW_LINE;
     private static final String LOGIN = TABULATION + "LOGIN {NUMBER 10 0}," + NEW_LINE;
     private static final String ACTION = TABULATION + "ACTION {NUMBER 10 0}" + NEW_LINE;
@@ -60,7 +60,7 @@ public class CreateTableScript extends ScriptGenerator {
 
         if (isStandardField(fieldName)) {
             isFieldNameValid = false;
-            while (reader.readLine().isEmpty()); // Continua a leggere per skippare AAZI, DATASTAMP, LOGIN e ACTION
+            while (reader.readLine().isEmpty()); // Continua a leggere per skippare ACOM, DATASTAMP, LOGIN e ACTION
         }
 
         return isFieldNameValid;
@@ -91,7 +91,7 @@ public class CreateTableScript extends ScriptGenerator {
             if (isLogicStateTable()) {
                 writer.append(fieldType).append(NEW_LINE);
             } else {
-                // AAZI, DATASTAMP, LOGIN e ACTION vengono automaticamente messi come ultimi campi
+                // ACOM, DATASTAMP, LOGIN e ACTION vengono automaticamente messi come ultimi campi
                 writer.append(fieldType).append(COMMA).append(NEW_LINE);
             }
         }
@@ -116,9 +116,9 @@ public class CreateTableScript extends ScriptGenerator {
 
             if (primaryKey.contains("_")) {
                 int charIndex = primaryKey.indexOf("_");
-                factory = primaryKey.substring(0, charIndex).concat(AAZI);
+                factory = primaryKey.substring(0, charIndex).concat(ACOM);
             } else {
-                factory = primaryKey.concat(AAZI);
+                factory = primaryKey.concat(ACOM);
             }
 
             writer.append(factory);

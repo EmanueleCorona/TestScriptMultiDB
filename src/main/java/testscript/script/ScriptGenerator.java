@@ -153,7 +153,7 @@ public abstract class ScriptGenerator {
     }
 
     protected boolean isStandardField(String fieldName) {
-        return (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) || fieldName.equals(TestScriptConst.ACTION) || fieldName.contains(TestScriptConst.AAZI));
+        return (fieldName.equals(TestScriptConst.DATASTAMP) || fieldName.equals(TestScriptConst.LOGIN) || fieldName.equals(TestScriptConst.ACTION) || fieldName.contains(TestScriptConst.ACOM));
     }
 
     protected boolean isLogicStateTable() {

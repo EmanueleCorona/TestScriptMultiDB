@@ -12,7 +12,7 @@ public class TestScriptConst {
     public static final String FIELD_TYPE = "FIELD_TYPE";
     public static final char LOGIC_STATE_TABLE = 'L';
     public static final char[] MASTER_TYPE_TABLE = {'A', 'T'};
-    public static final String AAZI = "_AAZI";
+    public static final String ACOM = "_ACOM";
     public static final String DATASTAMP = "DATASTAMP";
     public static final String LOGIN = "LOGIN";
     public static final String ACTION = "ACTION";
