@@ -1,5 +1,5 @@
 # TestScriptMultiDB
-Programma per generare automaticamente gli script di geocall.
+Programma per generare automaticamente gli script.
 
 Spiegazione funzionalità:
 
