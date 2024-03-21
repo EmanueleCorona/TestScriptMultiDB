@@ -72,19 +72,19 @@ public class TestScriptApplication {
     }
 
     private static int getChoiceUntilIsValid() {
-        int choice = 0;
-        boolean keepGoing = true;
+        int choice;
 
-        while (keepGoing) {
+        while (true) {
+            // Controllo se l'input è un intero
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
 
                 if (choice < 0 || choice > 6) {
                     System.err.print(Error.OPTION_NOT_VALID);
-                    choice = scanner.nextInt();
+                    continue;
                 }
 
-                keepGoing = false;
+                break;
 
             } else {
                 System.err.print(Error.OPTION_NOT_VALID);
